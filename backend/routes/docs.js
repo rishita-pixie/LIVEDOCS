@@ -1,4 +1,5 @@
-const express = require("express");
+// routes/docs.js
+import express from "express";
 const router = express.Router();
 
 // Temporary in-memory docs
@@ -8,7 +9,6 @@ const documents = {};
 router.post("/", (req, res) => {
   const id = Date.now().toString();
   documents[id] = { content: "" };
-
   res.status(201).json({ id });
 });
 
@@ -18,8 +18,7 @@ router.get("/:id", (req, res) => {
   if (!doc) {
     return res.status(404).json({ message: "Document not found" });
   }
-
   res.json(doc);
 });
 
-module.exports = router;
+export default router;
