@@ -1,16 +1,19 @@
 import express from "express";
 import Document from "../models/Document.js";
+import authMiddleware from "../middleware/auth.js";
+
 
 const router = express.Router();
 
 // CREATE DOCUMENT
-router.post("/", async (req, res) => {
+router.post("/",authMiddleware, async (req, res) => {
   try {
     const { title, content } = req.body;
 
     const newDoc = new Document({
       title,
-      content
+      content,
+       owner: req.user.id
     });
 
     const savedDoc = await newDoc.save();
@@ -22,7 +25,7 @@ router.post("/", async (req, res) => {
 
 
 // GET DOCUMENT BY ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", authMiddleware,async (req, res) => {
   try {
     const doc = await Document.findById(req.params.id);
 
@@ -37,7 +40,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // GET ALL DOCUMENTS
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
   try {
     const docs = await Document.find();
     res.json(docs);
@@ -45,5 +48,7 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+
 
 export default router;
