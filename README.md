@@ -67,7 +67,7 @@ backend/
 ├── server.js                 # Main server entry point
 ├── .env                      # Environment variables
 └── package.json              # Dependencies & scripts
-
+'''
 🔐 Authentication Flow
 
 1.Signup / Login
