@@ -1,24 +1,49 @@
-// routes/docs.js
 import express from "express";
+import Document from "../models/Document.js";
+
 const router = express.Router();
 
-// Temporary in-memory docs
-const documents = {};
-
 // CREATE DOCUMENT
-router.post("/", (req, res) => {
-  const id = Date.now().toString();
-  documents[id] = { content: "" };
-  res.status(201).json({ id });
+router.post("/", async (req, res) => {
+  try {
+    const { title, content } = req.body;
+
+    const newDoc = new Document({
+      title,
+      content
+    });
+
+    const savedDoc = await newDoc.save();
+    res.status(201).json(savedDoc);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
-// GET DOCUMENT
-router.get("/:id", (req, res) => {
-  const doc = documents[req.params.id];
-  if (!doc) {
-    return res.status(404).json({ message: "Document not found" });
+
+// GET DOCUMENT BY ID
+router.get("/:id", async (req, res) => {
+  try {
+    const doc = await Document.findById(req.params.id);
+
+    if (!doc) {
+      return res.status(404).json({ message: "Document not found" });
+    }
+
+    res.json(doc);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-  res.json(doc);
+});
+
+// GET ALL DOCUMENTS
+router.get("/", async (req, res) => {
+  try {
+    const docs = await Document.find();
+    res.json(docs);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 export default router;
