@@ -1,4 +1,4 @@
-# 📄 LiveDocs – Backend  
+# 📄 LiveDocs 
 ### A high-performance, secure, and interview-ready document management API 🚀
 
 LiveDocs is a **robust backend service** designed with **clean architecture** and **security-first principles**.  
@@ -50,6 +50,8 @@ The codebase follows a **modular and maintainable structure**, making it suitabl
 
 ---
 
+*"Keep it simple, keep it clean, keep it running."*
+
 ## 📂 Folder Structure
 
 ```bash
@@ -67,8 +69,11 @@ backend/
 ├── server.js                 # Main server entry point
 ├── .env                      # Environment variables
 └── package.json              # Dependencies & scripts
-'''
-🔐 Authentication Flow
+```
+---
+
+
+## 🔐 Authentication Flow
 
 1.Signup / Login
  User submits email and password
@@ -82,7 +87,7 @@ Client sends token with every request.
 4.Validation
  Middleware verifies token and allows access to protected routes
 
-🔗 API Documentation
+## 🔗 API Documentation
 
 | Method | Endpoint           | Description           |
 | ------ | ------------------ | --------------------- |
@@ -90,7 +95,7 @@ Client sends token with every request.
 | POST   | `/api/auth/login`  | Login and receive JWT |
 
 
- 📑 Document Routes (Protected)
+## 📑 Document Routes (Protected)
 
  | Method | Endpoint        | Description              |
 | ------ | --------------- | ------------------------ |
@@ -98,7 +103,7 @@ Client sends token with every request.
 | GET    | `/api/docs`     | Fetch all user documents |
 | GET    | `/api/docs/:id` | Fetch a document by ID   |
 
-⚙️ Setup & Installation
+## ⚙️ Setup & Installation
 
 1-git clone https://github.com/yourusername/livedocs-backend.git
 2-cd backend
@@ -111,6 +116,7 @@ JWT_SECRET=your_super_secret_key
 5-Server Started-Server running on http://localhost:5000
 MongoDB connected successfully
 
+---
 
 ⭐ Support
 
