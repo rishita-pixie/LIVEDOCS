@@ -1,54 +1,141 @@
-const BASE_URL = "http://localhost:5000"; // backend URL
-let jwtToken = ""; // store token globally
+/* ======================
+   PAGE SWITCHING
+====================== */
 
-// LOGIN FUNCTION
+function showLogin() {
+  loginPage.style.display = "block";
+  registerPage.style.display = "none";
+  dashboard.style.display = "none";
+}
+
+function showRegister() {
+  loginPage.style.display = "none";
+  registerPage.style.display = "block";
+  dashboard.style.display = "none";
+}
+
+function showDashboard() {
+  loginPage.style.display = "none";
+  registerPage.style.display = "none";
+  dashboard.style.display = "block";
+}
+
+/* ======================
+   AUTH
+====================== */
+
 async function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
   try {
-    const res = await fetch(`${BASE_URL}/api/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-    const data = await res.json();
+    const res = await AuthAPI.login({ email, password });
 
-    if (res.ok && data.token) {
-      jwtToken = data.token;
-      document.getElementById("token").innerText = jwtToken;
-      alert("Login successful!");
-    } else {
-      document.getElementById("token").innerText = data.message || "Login failed";
-    }
+    localStorage.setItem("token", res.data.token);
 
-    console.log("JWT Token:", jwtToken);
+    showDashboard();
+    fetchDocs();
   } catch (err) {
-    console.error(err);
-    document.getElementById("token").innerText = "Error connecting to server";
+    alert(err.response?.data?.message || "Login failed");
   }
 }
 
-// FETCH DOCUMENTS
-async function getDocs() {
-  if (!jwtToken) {
-    alert("Please login first!");
+async function register() {
+  try {
+    const email = document.getElementById("regEmail").value;
+    const password = document.getElementById("regPassword").value;
+
+    await AuthAPI.register({ email, password });
+
+    alert("Registered successfully");
+    showLogin();
+  } catch (err) {
+    alert(err.response?.data?.message || "Registration failed");
+  }
+}
+
+/* ======================
+   DOCUMENTS
+====================== */
+
+async function fetchDocs() {
+  try {
+    const res = await DocsAPI.getAll();
+    renderDocs(res.data);
+  } catch {
+    document.getElementById("docs").innerText =
+      "Failed to load documents";
+  }
+}
+
+function renderDocs(docs) {
+  const container = document.getElementById("docs");
+  container.innerHTML = "";
+
+  if (!docs.length) {
+    container.innerText = "No documents found";
     return;
   }
 
+  docs.forEach(doc => {
+    const div = document.createElement("div");
+    div.className = "doc-card";
+
+    div.innerHTML = `
+      <h4>${doc.title}</h4>
+      <p>${doc.content}</p>
+      <button onclick="deleteDoc('${doc._id}')">Delete</button>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+async function addDoc() {
   try {
-    const res = await fetch(`${BASE_URL}/api/docs`, {
-      headers: {
-        "Authorization": `Bearer ${jwtToken}`
-      }
-    });
+    const title = docTitle.value;
+    const content = docContent.value;
 
-    const data = await res.json();
-    document.getElementById("docs").innerText = JSON.stringify(data, null, 2);
+    if (!title || !content) {
+      alert("Fill all fields");
+      return;
+    }
 
-  } catch (err) {
-    console.error(err);
-    document.getElementById("docs").innerText = "Error fetching documents";
+    await DocsAPI.create({ title, content });
+
+    docTitle.value = "";
+    docContent.value = "";
+
+    fetchDocs();
+  } catch {
+    alert("Failed to add document");
   }
 }
+
+async function deleteDoc(id) {
+  await DocsAPI.delete(id);
+  fetchDocs();
+}
+
+/* ======================
+   LOGOUT
+====================== */
+
+function logout() {
+  localStorage.removeItem("token");
+  showLogin();
+}
+
+/* ======================
+   AUTO LOGIN ON REFRESH
+====================== */
+
+window.onload = () => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    showDashboard();
+    fetchDocs();
+  } else {
+    showLogin();
+  }
+};

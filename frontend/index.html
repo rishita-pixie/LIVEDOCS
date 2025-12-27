@@ -1,33 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>LiveDocs Mini Frontend</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>LiveDocs</title>
 </head>
 <body>
 
-  <div class="container">
-    <h2>LiveDocs Login</h2>
+<script>
+  const token = localStorage.getItem("token");
 
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Password" />
+  if (token) {
+    window.location.href = "dashboard.html";
+  } else {
+    window.location.href = "login.html";
+  }
+</script>
 
-    <button onclick="login()">Login</button>
-
-    <div class="section">
-      <h3>JWT Token</h3>
-      <pre id="token">Not logged in</pre>
-    </div>
-
-    <button onclick="getDocs()">Get My Documents</button>
-
-    <div class="section">
-      <h3>Documents</h3>
-      <pre id="docs">No documents</pre>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
 </body>
 </html>
